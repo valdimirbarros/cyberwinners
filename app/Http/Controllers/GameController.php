@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Game;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
+
 class GameController extends Controller
 {
     /**
@@ -35,21 +38,23 @@ class GameController extends Controller
      */
     public function store(Request $request)
     {
-        
         $gameSlug = $this->setSlug($request->title);
+        DB::beginTransaction();
+        try {
+            $newGame = new Game();
+            $newGame->title = $request->title;
+            $newGame->slug = $gameSlug;
+            $newGame->abbreviation = $request->abbreviation;
+            $newGame->description = $request->description;
+            if (!$newGame->save()) {
+                return "Erro ao salvar registro!";
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+        }
 
-        dd($gameSlug);
-    
-        $game = [
-            $request->title,
-            $gameSlug,
-            $request->abreviatura,
-            $request->descricao
-        ];
-
-        DB::insert("INSERT INTO game (title,slug,abreviatura,descricao) VALUES (?,?,?,?)", $game);
-
-        return redirect()->action('gameController@index');
+        return redirect()->action('GameController@index');
     }
 
     /**
@@ -58,9 +63,15 @@ class GameController extends Controller
      * @param  \App\game  $game
      * @return \Illuminate\Http\Response
      */
-    public function show(game $game)
+    public function show(game $game, $gameSlug)
     {
-        //
+        $game = Game::where('slug', $gameSlug)->first();
+
+        if (!empty($game)) {
+            return view('game.show')->with('game', $game);
+        } else {
+            return redirect()->action('GameController@index');
+        }
     }
 
     /**
@@ -69,9 +80,15 @@ class GameController extends Controller
      * @param  \App\game  $game
      * @return \Illuminate\Http\Response
      */
-    public function edit(game $game)
+    public function edit(game $game, $gameSlug)
     {
-        //
+        $game = Game::where('slug', $gameSlug)->first();
+
+        if (!empty($game)) {
+            return view('game.edit')->with('game', $game);
+        } else {
+            return redirect()->action('GameController@index');
+        }
     }
 
     /**
@@ -100,15 +117,11 @@ class GameController extends Controller
     private function setSlug($title)
     {
 
-        $gameSlug = str_slug($title);
-        
-        dd($gameSlug); 
-
-        $game = DB::select("SELECT * FROM game");
-
+        $gameSlug = Str::slug($title, '-');
+        $game = Game::all();
         $t = 0;
         foreach ($game as $game) {
-            if (str_slug($game->title) === $gameSlug) {
+            if (Str::slug($game->title, '-') === $gameSlug) {
                 $t++;
             }
         }

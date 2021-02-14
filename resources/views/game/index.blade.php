@@ -16,8 +16,10 @@
                 <td width="17%">{{$game->title}}</td>
                 <td width="5%">{{$game->abbreviation}}</td>
                 <td width="47%">{{$game->description}}</td>
-            <td><a href='{{url('/game/' . $game->slug)}}' class="btn btn-primary" >Ver mais</a> <a href='{{url('/game/editar/' . $game->slug)}}' class="btn btn-warning">Editar</a> <a
-                onclick="removePlayer({{url('/player/' . $player->slug)}})" class="btn btn-danger">Remover</a></td>
+            <td>
+                <a href='{{url('/jogo/' . $game->slug)}}' class="btn btn-primary" >Ver mais</a> 
+                <a href='{{url('/jogo/editar/' . $game->slug)}}' class="btn btn-warning">Editar</a> 
+                <a onclick="removeGame('{{$game->slug}}')" class="btn btn-danger">Remover</a></td>
             </tr>    
         @endforeach
             </table>

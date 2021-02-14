@@ -8,7 +8,7 @@
 
         <form action="<?= url('/jogo') ?>" method="post">
 
-            <input type="hidden" name="_token" value="{{csrf_token()}}">            
+            @csrf
             <div class="form-group">
                 <label for="title">Título do Jogo</label>
                 <input type="text" name="title" id="title" class="form-control" required>
