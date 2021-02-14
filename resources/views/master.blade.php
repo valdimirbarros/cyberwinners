@@ -18,11 +18,8 @@
             <a href="{{ url('/') }}" class="navbar-brand">Cyber<b>Winners</b></a>
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ url('/') }}">Home</a></li>   
-                <li class="nav-item"><a  class="nav-link" href="{{ url('/jogador') }}">Jogadores</a></li> 
-                <li class="nav-item"><a  class="nav-link" href="{{ url('/jogo') }}">Jogos</a></li>
-                <li class="nav-item"><a  class="nav-link" href="{{ url('/equipe') }}">Equipes</a></li>        
-                <li class="nav-item"><a  class="nav-link" href="{{ url('/campeonato') }}">Campeonatos</a></li>    
-                <li class="nav-item"><a  class="nav-link" href="{{ url('/partida') }}">Partidas e Desafios</a></li>    
+                <li class="nav-item"><a  class="nav-link" href="{{ url('/jogador') }}">Jogadores</a></li>   
+                <li class="nav-item"><a  class="nav-link" href="{{ url('/jogo') }}">Jogos</a></li>                         
             <ul>
         </div>
     </nav>
@@ -30,12 +27,8 @@
     @yield('content')
     
 <script src="{{ asset('js/app.js') }}"></script>
+<script src="{{ asset('js/custom.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
-<script> 
-    $(document).ready(function() {
-        $('.js-example-basic-multiple').select2();
-    });
-</script>
 </body>
 </html>
 

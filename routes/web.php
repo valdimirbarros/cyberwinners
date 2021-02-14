@@ -10,7 +10,23 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+//SOBRESCRITA DO MÉTODO RESOURCE
+Route::resourceVerbs([
+    'create' => 'cadastro',
+    'edit' => 'editar'
+]);
 
+
+//ROTA BÁSICA HOME
 Route::get('/', function () {
     return view('home');
 });
+
+//ROTAS PARA JOGADOR (PLAYER)
+Route::resource('jogador', 'PlayerController');
+
+//ROTAS PARA JOGO (GAME)
+Route::resource('jogo', 'GameController');
+
+
+
