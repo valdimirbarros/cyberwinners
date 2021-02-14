@@ -6,22 +6,22 @@
 
         <h1 class="text-center display-4">Formulário de Cadastro de Jogo</h1>
 
-        <form action="<?= url('/jogo/store') ?>" method="post">
+        <form action="<?= url('/jogo') ?>" method="post">
 
-            <?= csrf_field() ?>
+            <input type="hidden" name="_token" value="{{csrf_token()}}">            
             <div class="form-group">
-                <label for="titulo">Título do Jogo</label>
-                <input type="text" name="titulo" id="titulo" class="form-control" required>
+                <label for="title">Título do Jogo</label>
+                <input type="text" name="title" id="title" class="form-control" required>
             </div>
 
             <div class="form-group">
-                <label for="abreviatura">Abreviatura</label>
-                <input type="text" name="abreviatura" id="abreviatura" class="form-control" required>
+                <label for="abbreviation">Abreviatura</label>
+                <input type="text" name="abbreviation" id="abbreviation" class="form-control" required>
             </div>
 
             <div class="form-group">
-                <label for="descricao">Descrição</label>
-                <textarea name="descricao" id="descricao" cols="30" rows="10" class="form-control"></textarea>
+                <label for="description">Descrição</label>
+                <textarea name="description" id="description" cols="30" rows="10" class="form-control"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Cadastrar Jogo</button>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Game;
 use Illuminate\Http\Request;
-
 class GameController extends Controller
 {
     /**
@@ -25,7 +24,7 @@ class GameController extends Controller
      */
     public function create()
     {
-        //
+        return view('game.create');
     }
 
     /**
@@ -36,7 +35,21 @@ class GameController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $gameSlug = $this->setSlug($request->title);
+
+        dd($gameSlug);
+    
+        $game = [
+            $request->title,
+            $gameSlug,
+            $request->abreviatura,
+            $request->descricao
+        ];
+
+        DB::insert("INSERT INTO game (title,slug,abreviatura,descricao) VALUES (?,?,?,?)", $game);
+
+        return redirect()->action('gameController@index');
     }
 
     /**
@@ -82,5 +95,28 @@ class GameController extends Controller
     public function destroy(game $game)
     {
         //
+    }
+
+    private function setSlug($title)
+    {
+
+        $gameSlug = str_slug($title);
+        
+        dd($gameSlug); 
+
+        $game = DB::select("SELECT * FROM game");
+
+        $t = 0;
+        foreach ($game as $game) {
+            if (str_slug($game->title) === $gameSlug) {
+                $t++;
+            }
+        }
+
+        if ($t > 0) {
+            $gameSlug = $gameSlug . '-' . $t;
+        }
+
+        return $gameSlug;
     }
 }

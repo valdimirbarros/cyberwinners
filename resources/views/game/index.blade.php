@@ -3,7 +3,7 @@
 @section('content')
     <div class="container my-3">
         <h1 class="text-center display-4">Listagem de Jogos</h1>
-        <a href="<?= url('/jogo/cadastrar') ?>" class="btn btn-primary">Cadastrar Novo Jogo</span> </a>
+        <a href="<?= url('/jogo/cadastro') ?>" class="btn btn-primary">Cadastrar Novo Jogo</span> </a>
             <table class="table table-striped table-hover my-2">
                 <thead class='bg-primary text-white'>
                     <td>Título</td>
