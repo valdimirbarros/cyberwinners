@@ -124,12 +124,20 @@ class PlayerController extends Controller
      */
     public function edit(Player $player, $playerSlug)
     {
-        $player = Player::where('slug', $playerSlug)->first();
-
+        $player = Player::with('link_player_game.game')->where('slug', $playerSlug)->first();
+        $playerGamesIds = [];
+        foreach ($player->link_player_game as $value) {
+            $playerGamesIds[] = $value->game->id;
+        };
+        $games = Game::all();
         if (!empty($player)) {
-            return view('player.edit')->with('player', $player);
+            return view('player.edit')->with([
+                'player' => $player,
+                'games' => $games,
+                'playerGamesIds' => $playerGamesIds
+            ]);
         } else {
-            return redirect()->action('playerController@index');
+            return redirect()->action('PlayerController@index');
         }
     }
 
@@ -142,32 +150,71 @@ class PlayerController extends Controller
      */
     public function update(Request $request, Player $player, $slug)
     {
-        $player = Player::where('slug', $slug)->first();
+
+        $fieldsToValidate =  [
+            'name' => 'required|max:191',
+            'nickname' => 'nullable|max:100',
+            'description' => 'nullable|max:1000',
+            'games' => 'required|array',
+            'email' => 'nullable|max:191',
+            'external_profile' => 'nullable|max:191',
+        ];
+
+        $messagesIfFailsValidation = [
+            'name.required' => 'O campo Nome é obrigatório!',
+            'name.max' => 'O campo Nome possui um limite de 191 caracteres!',
+            'nickname.max' => 'O campo Nickname possui um limite de 100 caracteres!',
+            'description.max' => 'O campo Descrição possui um limite de 1000 caracteres!',
+            'games.required' => 'O campo Jogos é obrigatório!',
+            'games.array' => 'O campo Jogos Precisa ser um Vetor!', //aprimorar apresentação!
+            'email.max' => 'O campo E-mail possui um limite de 191 caracteres!',
+            'external_profile.max' => 'O campo Perfil Externo possui um limite de 191 caracteres!'
+        ];
+
+        $request->validate($fieldsToValidate, $messagesIfFailsValidation);
+
+        $player = Player::with('link_player_game.game')->where('slug', $slug)->first();
 
         if (!empty($player)) {
-            $playerSlugRequest = Str::slug($request->title, '-');
+            $playerSlugRequest = Str::slug($request->name, '-');
             if ($playerSlugRequest == $player->slug) {
-                $playerSlug = Str::slug($request->title, '-');
+                $playerSlug = Str::slug($request->name, '-');
             } else {
-                $playerSlug = $this->setSlug($request->title);
+                $playerSlug = $this->setSlug($request->name);
             }
 
             DB::beginTransaction();
             try {
-                $player->title = $request->title;
+                $player->name = $request->name;
                 $player->slug = $playerSlug;
-                $player->abbreviation = $request->abbreviation;
+                $player->nickname = $request->nickname;
                 $player->description = $request->description;
+                $player->email = $request->email;
+                $player->external_profile = $request->external_profile;
+
                 if (!$player->save()) {
-                    return "Erro ao atualizar registro!";
+                    return "Erro ao salvar registro!";
                 }
+
+                LinkPlayerGame::where('player_id', $player->id)->delete();
+                
+                foreach ($request->games as $gameId) {
+                    $newLinkPlayerGame = new LinkPlayerGame();
+                    $newLinkPlayerGame->player_id = $player->id;
+                    $newLinkPlayerGame->game_id = $gameId;
+                    if (!$newLinkPlayerGame->save()) {
+                        return "Erro ao salvar registro!";
+                    }
+                }
+ 
                 DB::commit();
             } catch (\Exception $e) {
+                return $e;
                 DB::rollback();
             }
         }
 
-        return redirect()->action('playerController@index');
+        return redirect()->action('PlayerController@index');
     }
 
     /**
@@ -194,14 +241,14 @@ class PlayerController extends Controller
         }
     }
 
-    private function setSlug($title)
+    private function setSlug($name)
     {
 
-        $playerSlug = Str::slug($title, '-');
+        $playerSlug = Str::slug($name, '-');
         $player = Player::all();
         $t = 0;
         foreach ($player as $player) {
-            if (Str::slug($player->title, '-') === $playerSlug) {
+            if (Str::slug($player->name, '-') === $playerSlug) {
                 $t++;
             }
         }
