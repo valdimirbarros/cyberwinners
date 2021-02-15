@@ -98,30 +98,31 @@ class GameController extends Controller
      * @param  \App\game  $game
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, game $game, $id)
-    {    
-        $game = Game::find($id);
+    public function update(Request $request, game $game, $slug)
+    {
+        $game = Game::where('slug', $slug)->first();
 
-        $gameSlugRequest = Str::slug($request->title, '-');
-
-        if($gameSlugRequest == $game->slug) {
-            $gameSlug = Str::slug($request->title, '-');
-        } else {
-            $gameSlug = $this->setSlug($request->title);
-        }
-
-        DB::beginTransaction();
-        try {
-            $game->title = $request->title;
-            $game->slug = $gameSlug;
-            $game->abbreviation = $request->abbreviation;
-            $game->description = $request->description;
-            if (!$game->save()) {
-                return "Erro ao salvar registro!";
+        if (!empty($game)) {
+            $gameSlugRequest = Str::slug($request->title, '-');
+            if ($gameSlugRequest == $game->slug) {
+                $gameSlug = Str::slug($request->title, '-');
+            } else {
+                $gameSlug = $this->setSlug($request->title);
             }
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollback();
+
+            DB::beginTransaction();
+            try {
+                $game->title = $request->title;
+                $game->slug = $gameSlug;
+                $game->abbreviation = $request->abbreviation;
+                $game->description = $request->description;
+                if (!$game->save()) {
+                    return "Erro ao atualizar registro!";
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+            }
         }
 
         return redirect()->action('GameController@index');
@@ -133,9 +134,21 @@ class GameController extends Controller
      * @param  \App\game  $game
      * @return \Illuminate\Http\Response
      */
-    public function destroy(game $game)
+    public function destroy(game $game, $slug)
     {
-        //
+        $game = Game::where('slug', $slug)->first();
+
+        if (!empty($game)) {
+            DB::beginTransaction();
+            try {
+                if (!$game->delete()) {
+                    return "Erro ao excluir registro!";
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+            }
+        }
     }
 
     private function setSlug($title)

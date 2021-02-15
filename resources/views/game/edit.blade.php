@@ -6,8 +6,9 @@
 
         <h1 class="text-center display-4">Formulário de Edição de Jogo</h1>
 
-        <form action="{{url('/jogo/') . "/" .  $game->id}}" method="post">
+        <form action='{{url('/jogo/' . $game->slug)}}' method="post">
             @csrf
+            
             @method('PUT')
             <div class="form-group">
                 <label for="title">Título do Jogo</label>
