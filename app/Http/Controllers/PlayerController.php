@@ -76,24 +76,21 @@ class PlayerController extends Controller
             $newPlayer->description = $request->description;
             $newPlayer->email = $request->email;
             $newPlayer->external_profile = $request->external_profile;
-
-            if (!$newPlayer->save()) {
-                return "Erro ao salvar registro!";
-            }
+            $newPlayer->save();
 
             foreach ($request->games as $gameId) {
                 $newLinkPlayerGame = new LinkPlayerGame();
                 $newLinkPlayerGame->player_id = $newPlayer->id;
                 $newLinkPlayerGame->game_id = $gameId;
-                if (!$newLinkPlayerGame->save()) {
-                    return "Erro ao salvar registro!";
-                }
+                $newLinkPlayerGame->save();
             }
 
             DB::commit();
+            return redirect()->action('PlayerController@index')->with('status-success', 'Registro criado!');
         } catch (\Exception $e) {
-            dd($e);
             DB::rollback();
+            return redirect()->action('PlayerController@index')->with('status-error', 'Falha ao salvar registro!');
+            //dd($e);
         }
 
         return redirect()->action('PlayerController@index');
@@ -112,7 +109,7 @@ class PlayerController extends Controller
         if (!empty($player)) {
             return view('player.show')->with('player', $player);
         } else {
-            return redirect()->action('PlayerController@index');
+            return redirect()->action('PlayerController@index')->with('status-error', 'Registro não encontrado!');
         }
     }
 
@@ -125,19 +122,19 @@ class PlayerController extends Controller
     public function edit(Player $player, $playerSlug)
     {
         $player = Player::with('link_player_game.game')->where('slug', $playerSlug)->first();
-        $playerGamesIds = [];
-        foreach ($player->link_player_game as $value) {
-            $playerGamesIds[] = $value->game->id;
-        };
-        $games = Game::all();
         if (!empty($player)) {
+            $playerGamesIds = [];
+            foreach ($player->link_player_game as $value) {
+                $playerGamesIds[] = $value->game->id;
+            };
+            $games = Game::all();
             return view('player.edit')->with([
                 'player' => $player,
                 'games' => $games,
                 'playerGamesIds' => $playerGamesIds
             ]);
         } else {
-            return redirect()->action('PlayerController@index');
+            return redirect()->action('PlayerController@index')->with('status-error', 'Registro não encontrado!');
         }
     }
 
@@ -191,30 +188,25 @@ class PlayerController extends Controller
                 $player->description = $request->description;
                 $player->email = $request->email;
                 $player->external_profile = $request->external_profile;
-
-                if (!$player->save()) {
-                    return "Erro ao salvar registro!";
-                }
+                $player->save();
 
                 LinkPlayerGame::where('player_id', $player->id)->delete();
-                
+
                 foreach ($request->games as $gameId) {
                     $newLinkPlayerGame = new LinkPlayerGame();
                     $newLinkPlayerGame->player_id = $player->id;
                     $newLinkPlayerGame->game_id = $gameId;
-                    if (!$newLinkPlayerGame->save()) {
-                        return "Erro ao salvar registro!";
-                    }
+                    $newLinkPlayerGame->save();
                 }
- 
+
                 DB::commit();
+                return redirect()->action('PlayerController@index')->with('status-success', 'Registro atualizado!');
             } catch (\Exception $e) {
-                return $e;
                 DB::rollback();
+                return redirect()->action('PlayerController@index')->with('status-error', 'Falha ao atualizar registro!');
+                //dd($e);
             }
         }
-
-        return redirect()->action('PlayerController@index');
     }
 
     /**
@@ -230,13 +222,13 @@ class PlayerController extends Controller
         if (!empty($player)) {
             DB::beginTransaction();
             try {
-                if (!$player->delete()) {
-                    return "Erro ao excluir registro!";
-                }
+                $player->delete();
                 DB::commit();
+                //return redirect()->action('PlayerController@index')->with('status-success', 'Registro excluído!');
             } catch (\Exception $e) {
-                dd($e);
                 DB::rollback();
+                //return redirect()->action('PlayerController@index')->with('status-error', 'Falha ao excluir registro!');
+                //dd($e);
             }
         }
     }

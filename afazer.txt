@@ -1,3 +1,2 @@
-- criar flash session messagens ao criar/editar/excluir recurso na base de dados
 - revisar mvc da aplicação
 - criar favicon personalizado
