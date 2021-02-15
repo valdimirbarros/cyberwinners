@@ -1,0 +1,5 @@
+- refazer migrations atribuindo as colunas parametros de required/null/default etc (esta dando problema ao salvar jogadores por ex)
+- criar seeds para base de dados
+- finalizar cadastro de jogadores e vinculo jogador com jogo
+- criar flash session messagens ao criar/editar/excluir recurso na base de dados
+- revisar mvc da aplicação

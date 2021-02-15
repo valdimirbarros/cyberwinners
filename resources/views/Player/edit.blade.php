@@ -4,40 +4,39 @@
 
     <div class="container my-3">
 
-        <h1 class="text-center display-4">Formulário de Edição de Jogador</h1>
+        <h1 class="text-center display-4">Formulário de Edição de Jogo</h1>
 
-        <form action="{{url('/jogador/update', ['id' => $jogador->id])}}" method="post">
+        @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+        @endif
 
-            <?= csrf_field() ?>
-
-            <?= method_field('PUT') ?>
-
+        <form action='{{url('/jogo/' . $game->slug)}}' method="post">
+            @csrf
+            
+            @method('PUT')
             <div class="form-group">
-                <label for="nome">Nome do Jogador</label>
-                <input type="text" name="nome" id="nome" class="form-control" value="{{$jogador->nome}}">
+                <label for="title">Título do Jogo</label>
+                <input type="text" name="title" id="title" class="form-control" value="{{$game->title}}" required>
             </div>
 
             <div class="form-group">
-                <label for="nickname">Nickname</label>
-                <input type="text" name="nickname" id="nickname" class="form-control" value="{{$jogador->nickname}}">
+                <label for="abbreviation">Abreviatura</label>
+                <input type="text" name="abbreviation" id="abbreviation" class="form-control" value="{{$game->abbreviation }}" required>
             </div>
 
             <div class="form-group">
-                <label for="descricao">Descrição</label>
-                <textarea name="descricao" id="descricao" cols="30" rows="10" class="form-control">{{$jogador->descricao}}</textarea>
+                <label for="description">Descrição</label>
+                <textarea name="description" id="description" cols="30" rows="10" class="form-control">{{$game->description}}</textarea>
             </div>
 
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" name="email" id="email" class="form-control" value="{{$jogador->email}}">
-            </div>
-
-            <div class="form-group">
-                <label for="perfil_externo">Perfil Externo:</label>
-                <input type="text" name="perfil_externo" id="perfil_externo" class="form-control" value="{{$jogador->perfil_externo}}">
-            </div>
-
-            <button type="submit" class="btn btn-primary">Alterar Jogador</button>
+            <button type="submit" class="btn btn-primary">Editar Jogo</button>
         </form>
     </div>
 @endsection
+

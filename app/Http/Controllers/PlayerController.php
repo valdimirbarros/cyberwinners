@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\player;
+use App\Player;
+use App\Game;
+use App\LinkPlayerGame;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 class PlayerController extends Controller
 {
@@ -14,7 +18,7 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        $players = player::all();
+        $players = Player::all();
         return view('player.index')->with('players', $players);
     }
 
@@ -25,7 +29,8 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        //
+        $games = Game::all();
+        return view('player.create')->with('games', $games);
     }
 
     /**
@@ -36,51 +41,180 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $fieldsToValidate =  [
+            'name' => 'required|max:191',
+            'nickname' => 'nullable|max:100',
+            'description' => 'nullable|max:1000',
+            'games' => 'required|array',
+            'email' => 'nullable|max:191',
+            'external_profile' => 'nullable|max:191',
+        ];
+
+        $messagesIfFailsValidation = [
+            'name.required' => 'O campo Nome é obrigatório!',
+            'name.max' => 'O campo Nome possui um limite de 191 caracteres!',
+            'nickname.max' => 'O campo Nickname possui um limite de 100 caracteres!',
+            'description.max' => 'O campo Descrição possui um limite de 1000 caracteres!',
+            'games.required' => 'O campo Jogos é obrigatório!',
+            'games.array' => 'O campo Jogos Precisa ser um Vetor!', //aprimorar apresentação!
+            'email.max' => 'O campo E-mail possui um limite de 191 caracteres!',
+            'external_profile.max' => 'O campo Perfil Externo possui um limite de 191 caracteres!'
+        ];
+
+        $request->validate($fieldsToValidate, $messagesIfFailsValidation);
+
+
+        $playerSlug = $this->setSlug($request->name);
+        DB::beginTransaction();
+        try {
+
+            $newPlayer = new Player();
+            $newPlayer->name = $request->name;
+            $newPlayer->slug = $playerSlug;
+            $newPlayer->nickname = $request->nickname;
+            $newPlayer->description = $request->description;
+            $newPlayer->email = $request->email;
+            $newPlayer->external_profile = $request->external_profile;
+
+            //  ERRO! -> #sql: "insert into `player` (`name`, `slug`, `nickname`, `description`, `email`, `external_profile`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?)"
+
+            //$newPlayer->pontuation = null;
+            if (!$newPlayer->save() ) {
+                return "Erro ao salvar registro!";
+            }
+
+           
+
+            foreach($request->games as $gameId) {
+                $newLinkPlayerGame = new LinkPlayerGame();
+                $newLinkPlayerGame->player_id = $newPlayer->id;
+                $newLinkPlayerGame->game_id = $gameId;
+            }
+
+            if (!$newLinkPlayerGame->save() ) {
+                return "Erro ao salvar registro!";
+            }
+        
+            DB::commit();
+        } catch (\Exception $e) {
+            dd($e);
+            DB::rollback();
+        }
+
+        return redirect()->action('PlayerController@index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\player  $player
+     * @param  \App\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function show(player $player)
+    public function show(Player $player, $playerSlug)
     {
-        //
+        $player = Player::where('slug', $playerSlug)->first();
+
+        if (!empty($player)) {
+            return view('player.show')->with('player', $player);
+        } else {
+            return redirect()->action('playerController@index');
+        }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\player  $player
+     * @param  \App\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function edit(player $player)
+    public function edit(Player $player, $playerSlug)
     {
-        //
+        $player = Player::where('slug', $playerSlug)->first();
+
+        if (!empty($player)) {
+            return view('player.edit')->with('player', $player);
+        } else {
+            return redirect()->action('playerController@index');
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\player  $player
+     * @param  \App\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, player $player)
+    public function update(Request $request, Player $player, $slug)
     {
-        //
+        $player = Player::where('slug', $slug)->first();
+
+        if (!empty($player)) {
+            $playerSlugRequest = Str::slug($request->title, '-');
+            if ($playerSlugRequest == $player->slug) {
+                $playerSlug = Str::slug($request->title, '-');
+            } else {
+                $playerSlug = $this->setSlug($request->title);
+            }
+
+            DB::beginTransaction();
+            try {
+                $player->title = $request->title;
+                $player->slug = $playerSlug;
+                $player->abbreviation = $request->abbreviation;
+                $player->description = $request->description;
+                if (!$player->save()) {
+                    return "Erro ao atualizar registro!";
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+            }
+        }
+
+        return redirect()->action('playerController@index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\player  $player
+     * @param  \App\Player  $player
      * @return \Illuminate\Http\Response
      */
-    public function destroy(player $player)
+    public function destroy(Player $player, $slug)
     {
-        //
+        $player = Player::where('slug', $slug)->first();
+
+        if (!empty($player)) {
+            DB::beginTransaction();
+            try {
+                if (!$player->delete()) {
+                    return "Erro ao excluir registro!";
+                }
+                DB::commit();
+            } catch (\Exception $e) {
+                DB::rollback();
+            }
+        }
+    }
+
+    private function setSlug($title)
+    {
+
+        $playerSlug = Str::slug($title, '-');
+        $player = Player::all();
+        $t = 0;
+        foreach ($player as $player) {
+            if (Str::slug($player->title, '-') === $playerSlug) {
+                $t++;
+            }
+        }
+
+        if ($t > 0) {
+            $playerSlug = $playerSlug . '-' . $t;
+        }
+
+        return $playerSlug;
     }
 }

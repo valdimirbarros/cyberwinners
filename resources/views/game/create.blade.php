@@ -6,7 +6,17 @@
 
         <h1 class="text-center display-4">Formulário de Cadastro de Jogo</h1>
 
-        <form action="<?= url('/jogo') ?>" method="post">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+        <form action="{{url('/jogo')}}" method="post">
 
             @csrf
             <div class="form-group">
@@ -16,7 +26,7 @@
 
             <div class="form-group">
                 <label for="abbreviation">Abreviatura</label>
-                <input type="text" name="abbreviation" id="abbreviation" class="form-control" required>
+                <input type="text" name="abbreviation" id="abbreviation" class="form-control" >
             </div>
 
             <div class="form-group">
