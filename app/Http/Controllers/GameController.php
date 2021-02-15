@@ -63,15 +63,14 @@ class GameController extends Controller
             $newGame->slug = $gameSlug;
             $newGame->abbreviation = $request->abbreviation;
             $newGame->description = $request->description;
-            if (!$newGame->save()) {
-                return "Erro ao salvar registro!";
-            }
+            $newGame->save();
             DB::commit();
+            return redirect()->action('GameController@index')->with('status-success', 'Registro criado!');
         } catch (\Exception $e) {
             DB::rollback();
+            return redirect()->action('GameController@index')->with('status-error', 'Falha ao salvar registro!');
+            //dd($e);
         }
-
-        return redirect()->action('GameController@index');
     }
 
     /**
@@ -87,7 +86,7 @@ class GameController extends Controller
         if (!empty($game)) {
             return view('game.show')->with('game', $game);
         } else {
-            return redirect()->action('GameController@index');
+            return redirect()->action('GameController@index')->with('status-error', 'Registro não encontrado!');
         }
     }
 
@@ -104,7 +103,7 @@ class GameController extends Controller
         if (!empty($game)) {
             return view('game.edit')->with('game', $game);
         } else {
-            return redirect()->action('GameController@index');
+            return redirect()->action('GameController@index')->with('status-error', 'Registro não encontrado!');
         }
     }
 
@@ -117,7 +116,7 @@ class GameController extends Controller
      */
     public function update(Request $request, game $game, $slug)
     {
-        
+
         $fieldsToValidate =  [
             'title' => 'required|max:191',
             'abbreviation' => 'nullable|max:10',
@@ -133,7 +132,7 @@ class GameController extends Controller
 
         $request->validate($fieldsToValidate, $messagesIfFailsValidation);
 
-        
+
         $game = Game::where('slug', $slug)->first();
 
         if (!empty($game)) {
@@ -146,20 +145,19 @@ class GameController extends Controller
 
             DB::beginTransaction();
             try {
-                $game->title = $request->title;
+                $game->title = $request->title;              
                 $game->slug = $gameSlug;
                 $game->abbreviation = $request->abbreviation;
                 $game->description = $request->description;
-                if (!$game->save()) {
-                    return "Erro ao atualizar registro!";
-                }
+                $game->save();
                 DB::commit();
+                return redirect()->action('GameController@index')->with('status-success', 'Registro atualizado!');
             } catch (\Exception $e) {
                 DB::rollback();
+                return redirect()->action('GameController@index')->with('status-error', 'Falha ao atualizar registro!');
+                //dd($e);
             }
-        }
-
-        return redirect()->action('GameController@index');
+        }      
     }
 
     /**
@@ -175,12 +173,13 @@ class GameController extends Controller
         if (!empty($game)) {
             DB::beginTransaction();
             try {
-                if (!$game->delete()) {
-                    return "Erro ao excluir registro!";
-                }
+                $game->delete();
                 DB::commit();
+                //return redirect()->action('GameController@index')->with('status-success', 'Registro excluído!');
             } catch (\Exception $e) {
                 DB::rollback();
+                //return redirect()->action('GameController@index')->with('status-error', 'Falha ao excluir registro!');
+                //dd($e);
             }
         }
     }
