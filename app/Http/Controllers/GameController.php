@@ -98,9 +98,33 @@ class GameController extends Controller
      * @param  \App\game  $game
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, game $game)
-    {
-        //
+    public function update(Request $request, game $game, $id)
+    {    
+        $game = Game::find($id);
+
+        $gameSlugRequest = Str::slug($request->title, '-');
+
+        if($gameSlugRequest == $game->slug) {
+            $gameSlug = Str::slug($request->title, '-');
+        } else {
+            $gameSlug = $this->setSlug($request->title);
+        }
+
+        DB::beginTransaction();
+        try {
+            $game->title = $request->title;
+            $game->slug = $gameSlug;
+            $game->abbreviation = $request->abbreviation;
+            $game->description = $request->description;
+            if (!$game->save()) {
+                return "Erro ao salvar registro!";
+            }
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+        }
+
+        return redirect()->action('GameController@index');
     }
 
     /**

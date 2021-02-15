@@ -19,7 +19,7 @@
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item"><a class="nav-link" href="{{ url('/') }}">Home</a></li>   
                 <li class="nav-item"><a  class="nav-link" href="{{ url('/jogador') }}">Jogadores</a></li>   
-                <li class="nav-item"><a  class="nav-link" href="{{ url('/jogo') }}">Jogos</a></li>                         
+                <li class="nav-item"><a  class="nav-link" href="{{ url("jogo")  }}">Jogos</a></li>                         
             <ul>
         </div>
     </nav>
