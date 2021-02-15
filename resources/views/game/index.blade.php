@@ -14,9 +14,9 @@
             </div>
         @endif
 
-        <a href="{{url('/jogo/cadastro')}}" class="btn btn-primary">Cadastrar Novo Jogo</span> </a>
-            <table class="table table-striped table-hover my-2">
-                <thead class='bg-primary text-white'>
+        <a href="{{url('/jogo/cadastro')}}" class="btn btn-dark">Cadastrar Novo Jogo</span> </a>
+            <table class="table table-striped table-hover table-dark table-bordered my-2">
+                <thead>
                     <td>Título</td>
                     <td>Abreviatura</td>
                     <td>Descrição</td>
@@ -28,8 +28,8 @@
                 <td width="5%">{{$game->abbreviation}}</td>
                 <td width="47%">{{$game->description}}</td>
             <td>
-                <a href='{{url('/jogo/' . $game->slug)}}' class="btn btn-primary" >Ver mais</a> 
-                <a href='{{url('/jogo/' . $game->slug . '/editar/')}}' class="btn btn-warning">Editar</a> 
+                <a href='{{url('/jogo/' . $game->slug)}}' class="btn btn-light" >Ver mais</a> 
+                <a href='{{url('/jogo/' . $game->slug . '/editar/')}}' class="btn btn-secondary">Editar</a> 
                 <button onclick="removeGame('{{$game->slug}}')" class="btn btn-danger">Remover</a></td>
             </tr>    
         @endforeach

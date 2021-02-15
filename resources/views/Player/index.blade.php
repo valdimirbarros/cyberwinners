@@ -15,9 +15,9 @@
         @endif
 
         
-        <a href="{{url('/jogador/cadastro')}}" class="btn btn-primary">Cadastrar Novo jogador</span> </a>
-            <table class="table table-striped table-hover my-2">
-                <thead class='bg-primary text-white'>
+        <a href="{{url('/jogador/cadastro')}}" class="btn btn-dark">Cadastrar Novo jogador</span> </a>
+            <table class="table table-striped table-hover table-dark table-bordered my-2">
+                <thead>
                     <td>Nome</td>
                     <td>Nickname</td>
                     <td>Descrição</td>
@@ -31,8 +31,8 @@
                 <td width="40%">{{$player->description}}</td>
                 <td width="5%">{{$player->pontuation}}</td>
             <td>
-                <a href='{{url('/jogador/' . $player->slug)}}' class="btn btn-primary" >Ver mais</a> 
-                <a href='{{url('/jogador/' . $player->slug . '/editar/')}}' class="btn btn-warning">Editar</a> 
+                <a href='{{url('/jogador/' . $player->slug)}}' class="btn btn-light" >Ver mais</a> 
+                <a href='{{url('/jogador/' . $player->slug . '/editar/')}}' class="btn btn-secondary">Editar</a> 
                 <button onclick="removePlayer('{{$player->slug}}')" class="btn btn-danger">Remover</a></td>
             </tr>    
         @endforeach
