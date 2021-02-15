@@ -16,13 +16,13 @@ class CreateJogadorsTable extends Migration
        
         Schema::create('player', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('slug');
-            $table->string('nickname');
-            $table->text('description');
-            $table->string('email');
-            $table->string('external_profile');
-            $table->decimal('pontuation', 10, 2);	
+            $table->string('name')->nullable(false);
+            $table->string('slug')->nullable(false);
+            $table->string('nickname')->nullable();
+            $table->text('description')->nullable();
+            $table->string('email')->nullable();
+            $table->string('external_profile')->nullable();
+            $table->decimal('pontuation', 10, 2)->nullable();	
             $table->timestamps();
             $table->softDeletes();	
         });

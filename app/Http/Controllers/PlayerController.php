@@ -41,7 +41,7 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $fieldsToValidate =  [
             'name' => 'required|max:191',
             'nickname' => 'nullable|max:100',
@@ -77,25 +77,19 @@ class PlayerController extends Controller
             $newPlayer->email = $request->email;
             $newPlayer->external_profile = $request->external_profile;
 
-            //  ERRO! -> #sql: "insert into `player` (`name`, `slug`, `nickname`, `description`, `email`, `external_profile`, `updated_at`, `created_at`) values (?, ?, ?, ?, ?, ?, ?, ?)"
-
-            //$newPlayer->pontuation = null;
-            if (!$newPlayer->save() ) {
+            if (!$newPlayer->save()) {
                 return "Erro ao salvar registro!";
             }
 
-           
-
-            foreach($request->games as $gameId) {
+            foreach ($request->games as $gameId) {
                 $newLinkPlayerGame = new LinkPlayerGame();
                 $newLinkPlayerGame->player_id = $newPlayer->id;
                 $newLinkPlayerGame->game_id = $gameId;
+                if (!$newLinkPlayerGame->save()) {
+                    return "Erro ao salvar registro!";
+                }
             }
 
-            if (!$newLinkPlayerGame->save() ) {
-                return "Erro ao salvar registro!";
-            }
-        
             DB::commit();
         } catch (\Exception $e) {
             dd($e);
@@ -118,7 +112,7 @@ class PlayerController extends Controller
         if (!empty($player)) {
             return view('player.show')->with('player', $player);
         } else {
-            return redirect()->action('playerController@index');
+            return redirect()->action('PlayerController@index');
         }
     }
 

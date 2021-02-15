@@ -15,10 +15,10 @@ class CreateGamesTable extends Migration
     {
         Schema::create('game', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('title');
-            $table->string('slug');
-            $table->string('abbreviation');
-            $table->text('description');
+            $table->string('title')->nullable(false);
+            $table->string('slug')->nullable(false);
+            $table->string('abbreviation')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
