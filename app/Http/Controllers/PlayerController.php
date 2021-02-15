@@ -107,7 +107,7 @@ class PlayerController extends Controller
      */
     public function show(Player $player, $playerSlug)
     {
-        $player = Player::where('slug', $playerSlug)->first();
+        $player = Player::with('link_player_game.game')->where('slug', $playerSlug)->first();
 
         if (!empty($player)) {
             return view('player.show')->with('player', $player);
@@ -188,6 +188,7 @@ class PlayerController extends Controller
                 }
                 DB::commit();
             } catch (\Exception $e) {
+                dd($e);
                 DB::rollback();
             }
         }

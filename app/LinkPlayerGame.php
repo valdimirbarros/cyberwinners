@@ -3,10 +3,17 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
 class LinkPlayerGame extends Model
 {
-    use SoftDeletes;
     protected $table = 'link_player_game';
+
+    public function game()
+    {
+        return $this->belongsTo('App\Game');
+    }
+
+    public function player()
+    {
+        return $this->belongsTo('App\Player');
+    }
 }

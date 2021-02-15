@@ -24,7 +24,6 @@ class CreateJogadorsTable extends Migration
             $table->string('external_profile')->nullable();
             $table->decimal('pontuation', 10, 2)->nullable();	
             $table->timestamps();
-            $table->softDeletes();	
         });
     }
 

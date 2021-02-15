@@ -20,7 +20,6 @@ class CreateGamesTable extends Migration
             $table->string('abbreviation')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
