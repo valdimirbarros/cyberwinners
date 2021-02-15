@@ -21,17 +21,17 @@
             @csrf
             <div class="form-group">
                 <label for="title">Título do Jogo</label>
-                <input type="text" name="title" id="title" class="form-control" required>
+                <input type="text" name="title" id="title" class="form-control" value="{{ old('title') }}" required>
             </div>
 
             <div class="form-group">
                 <label for="abbreviation">Abreviatura</label>
-                <input type="text" name="abbreviation" id="abbreviation" class="form-control" >
+                <input type="text" name="abbreviation" id="abbreviation" class="form-control" value="{{ old('abbreviation') }}" >
             </div>
 
             <div class="form-group">
                 <label for="description">Descrição</label>
-                <textarea name="description" id="description" cols="30" rows="10" class="form-control"></textarea>
+                <textarea name="description" id="description" cols="30" rows="10" class="form-control">{{ old('description') }}</textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Cadastrar Jogo</button>

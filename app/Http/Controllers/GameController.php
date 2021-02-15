@@ -42,13 +42,14 @@ class GameController extends Controller
         $fieldsToValidate =  [
             'title' => 'required|max:191',
             'abbreviation' => 'nullable|max:10',
-            'description' => 'nullable'
+            'description' => 'nullable|max:1000'
         ];
 
         $messagesIfFailsValidation = [
             'title.required' => 'O campo Título do Jogo é obrigatório!',
             'title.max' => 'O campo Título do Jogo possui um limite de 191 caracteres!',
-            'abbreviation.max' => 'O campo Abreviatura possui um limite de 10 caracteres!'
+            'abbreviation.max' => 'O campo Abreviatura possui um limite de 10 caracteres!',
+            'description.max' => 'O campo Descrição possui um limite de 1000 caracteres!'
         ];
 
         $request->validate($fieldsToValidate, $messagesIfFailsValidation);

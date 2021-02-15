@@ -22,17 +22,17 @@
             @csrf
             <div class="form-group">
                 <label for="name">Nome:</label>
-                <input type="text" name="name" id="name" class="form-control" required>
+                <input type="text" name="name" id="name" class="form-control" value="{{ old('name') }}" required>
             </div>
 
             <div class="form-group">
                 <label for="nickname">Nickname:</label>
-                <input type="text" name="nickname" id="nickname" class="form-control" >
+                <input type="text" name="nickname" id="nickname" class="form-control" value="{{ old('nickname') }}" >
             </div>
 
             <div class="form-group">
                 <label for="description">Descrição:</label>
-                <textarea name="description" id="description" cols="30" rows="10" class="form-control"></textarea>
+                <textarea name="description" id="description" cols="30" rows="10" class="form-control">{{ old('description') }}</textarea>
             </div>
 
             <div class="form-group">
@@ -46,12 +46,12 @@
 
             <div class="form-group">
                 <label for="email">E-mail:</label>
-                <input type="email" name="email" id="email" class="form-control">
+                <input type="email" name="email" id="email" class="form-control" value="{{ old('email') }}">
             </div>
 
             <div class="form-group">
                 <label for="external_profile">Perfil Externo:</label>
-                <input type="text" name="external_profile" id="external_profile" class="form-control">
+                <input type="text" name="external_profile" id="external_profile" class="form-control" value="{{ old('external_profile') }}">
             </div>
 
             <button type="submit" class="btn btn-primary">Cadastrar jogador</button>
