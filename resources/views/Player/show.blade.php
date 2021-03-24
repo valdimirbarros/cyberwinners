@@ -14,7 +14,7 @@
 
         <h2><strong>Email: </strong>{{$player->email}}</h2>
 
-        <h2><strong>Perfil Externo: </strong>{{$player->external_profile}}</h2>
+        <h2><strong>Perfil Externo: </strong><a href="{{$player->external_profile}}">{{$player->external_profile}}</a></h2>
 
         <h2><strong>Jogos: </strong> 
             @foreach ($player->link_player_game as $item)
