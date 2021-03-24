@@ -16,7 +16,7 @@ class GameController extends Controller
      */
     public function index()
     {
-        $games = Game::all();
+        $games = Game::all()->sortBy("title");
         return view('game.index')->with('games', $games);
     }
 

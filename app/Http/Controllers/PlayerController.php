@@ -18,7 +18,7 @@ class PlayerController extends Controller
      */
     public function index()
     {
-        $players = Player::all();
+        $players = Player::all()->sortByDesc("pontuation");;
         return view('player.index')->with('players', $players);
     }
 
@@ -43,23 +43,22 @@ class PlayerController extends Controller
     {
 
         $fieldsToValidate =  [
-            'name' => 'required|max:191',
+            'name' => 'required|max:192',
             'nickname' => 'nullable|max:100',
             'description' => 'nullable|max:1000',
-            'games' => 'required|array',
-            'email' => 'nullable|max:191',
-            'external_profile' => 'nullable|max:191',
+            'games' => 'array',
+            'email' => 'nullable|max:192',
+            'external_profile' => 'nullable|max:192',
         ];
 
         $messagesIfFailsValidation = [
             'name.required' => 'O campo Nome é obrigatório!',
-            'name.max' => 'O campo Nome possui um limite de 191 caracteres!',
+            'name.max' => 'O campo Nome possui um limite de 192 caracteres!',
             'nickname.max' => 'O campo Nickname possui um limite de 100 caracteres!',
             'description.max' => 'O campo Descrição possui um limite de 1000 caracteres!',
-            'games.required' => 'O campo Jogos é obrigatório!',
             'games.array' => 'O campo Jogos Precisa ser um Vetor!', //aprimorar apresentação!
-            'email.max' => 'O campo E-mail possui um limite de 191 caracteres!',
-            'external_profile.max' => 'O campo Perfil Externo possui um limite de 191 caracteres!'
+            'email.max' => 'O campo E-mail possui um limite de 192 caracteres!',
+            'external_profile.max' => 'O campo Perfil Externo possui um limite de 192 caracteres!'
         ];
 
         $request->validate($fieldsToValidate, $messagesIfFailsValidation);
@@ -77,14 +76,14 @@ class PlayerController extends Controller
             $newPlayer->email = $request->email;
             $newPlayer->external_profile = $request->external_profile;
             $newPlayer->save();
-
-            foreach ($request->games as $gameId) {
-                $newLinkPlayerGame = new LinkPlayerGame();
-                $newLinkPlayerGame->player_id = $newPlayer->id;
-                $newLinkPlayerGame->game_id = $gameId;
-                $newLinkPlayerGame->save();
-            }
-
+            if(!Is_Null($request->games)){
+                foreach ($request->games as $gameId) {
+                    $newLinkPlayerGame = new LinkPlayerGame();
+                    $newLinkPlayerGame->player_id = $newPlayer->id;
+                    $newLinkPlayerGame->game_id = $gameId;
+                    $newLinkPlayerGame->save();
+                }
+            };
             DB::commit();
             return redirect()->action('PlayerController@index')->with('status-success', 'Registro criado com sucesso!');
         } catch (\Exception $e) {
@@ -149,23 +148,22 @@ class PlayerController extends Controller
     {
 
         $fieldsToValidate =  [
-            'name' => 'required|max:191',
+            'name' => 'required|max:192',
             'nickname' => 'nullable|max:100',
             'description' => 'nullable|max:1000',
-            'games' => 'required|array',
-            'email' => 'nullable|max:191',
-            'external_profile' => 'nullable|max:191',
+            'games' => 'array',
+            'email' => 'nullable|max:192',
+            'external_profile' => 'nullable|max:192',
         ];
 
         $messagesIfFailsValidation = [
             'name.required' => 'O campo Nome é obrigatório!',
-            'name.max' => 'O campo Nome possui um limite de 191 caracteres!',
+            'name.max' => 'O campo Nome possui um limite de 192 caracteres!',
             'nickname.max' => 'O campo Nickname possui um limite de 100 caracteres!',
             'description.max' => 'O campo Descrição possui um limite de 1000 caracteres!',
-            'games.required' => 'O campo Jogos é obrigatório!',
             'games.array' => 'O campo Jogos Precisa ser um Vetor!', //aprimorar apresentação!
-            'email.max' => 'O campo E-mail possui um limite de 191 caracteres!',
-            'external_profile.max' => 'O campo Perfil Externo possui um limite de 191 caracteres!'
+            'email.max' => 'O campo E-mail possui um limite de 192 caracteres!',
+            'external_profile.max' => 'O campo Perfil Externo possui um limite de 192 caracteres!'
         ];
 
         $request->validate($fieldsToValidate, $messagesIfFailsValidation);
@@ -189,15 +187,19 @@ class PlayerController extends Controller
                 $player->email = $request->email;
                 $player->external_profile = $request->external_profile;
                 $player->save();
-
                 LinkPlayerGame::where('player_id', $player->id)->delete();
 
-                foreach ($request->games as $gameId) {
-                    $newLinkPlayerGame = new LinkPlayerGame();
-                    $newLinkPlayerGame->player_id = $player->id;
-                    $newLinkPlayerGame->game_id = $gameId;
-                    $newLinkPlayerGame->save();
+                if(!Is_Null($request->games)){
+                    foreach ($request->games as $gameId) {
+                        $newLinkPlayerGame = new LinkPlayerGame();
+                        $newLinkPlayerGame->player_id = $player->id;
+                        $newLinkPlayerGame->game_id = $gameId;
+                        $newLinkPlayerGame->save();
+                    }
+                    
                 }
+
+                
 
                 DB::commit();
                 return redirect()->action('PlayerController@index')->with('status-success', 'Registro atualizado com sucesso!');
