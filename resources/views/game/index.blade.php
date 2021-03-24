@@ -28,33 +28,22 @@
                 <td width="5%">{{$game->abbreviation}}</td>
                 <td width="47%">{{$game->description}}</td>
             <td>
-                <a href='{{url('/jogo/' . $game->slug)}}' class="btn btn-light" >Ver mais</a> 
-                <a href='{{url('/jogo/' . $game->slug . '/editar/')}}' class="btn btn-secondary">Editar</a> 
-                <button onclick="removeGame('{{$game->slug}}')" class="btn btn-danger">Remover</a></td>
+                <div class="d-flex justify-content-around">
+                    <a href='{{url('/jogo/' . $game->slug)}}' class="btn btn-light">Ver mais</a> 
+                    <a href='{{url('/jogo/' . $game->slug . '/editar/')}}' class="btn btn-secondary">Editar</a> 
+                    <form action="{{url('/jogo/' . $game->slug)}}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form> 
+                </div>
+                           
             </tr>    
         @endforeach
             </table>
         
-            
-
     </div>
 
-    <script>
-        function removeGame(slug){
-            $.ajax({
-                type:'DELETE',
-                url: '{{url('/jogo/')}}/' + slug,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                    window.location.reload();
-                }
-             });
-        
-        }
-        
-    </script>
 
 @endsection
 

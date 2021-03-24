@@ -86,7 +86,7 @@ class PlayerController extends Controller
             }
 
             DB::commit();
-            return redirect()->action('PlayerController@index')->with('status-success', 'Registro criado!');
+            return redirect()->action('PlayerController@index')->with('status-success', 'Registro criado com sucesso!');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->action('PlayerController@index')->with('status-error', 'Falha ao salvar registro!');
@@ -200,7 +200,7 @@ class PlayerController extends Controller
                 }
 
                 DB::commit();
-                return redirect()->action('PlayerController@index')->with('status-success', 'Registro atualizado!');
+                return redirect()->action('PlayerController@index')->with('status-success', 'Registro atualizado com sucesso!');
             } catch (\Exception $e) {
                 DB::rollback();
                 return redirect()->action('PlayerController@index')->with('status-error', 'Falha ao atualizar registro!');
@@ -224,10 +224,10 @@ class PlayerController extends Controller
             try {
                 $player->delete();
                 DB::commit();
-                //return redirect()->action('PlayerController@index')->with('status-success', 'Registro excluído!');
+                return redirect()->action('PlayerController@index')->with('status-success', 'Registro excluído com sucesso!');
             } catch (\Exception $e) {
                 DB::rollback();
-                //return redirect()->action('PlayerController@index')->with('status-error', 'Falha ao excluir registro!');
+                return redirect()->action('PlayerController@index')->with('status-error', 'Falha ao excluir registro!');
                 //dd($e);
             }
         }

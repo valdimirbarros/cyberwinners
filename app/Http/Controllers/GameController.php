@@ -65,7 +65,7 @@ class GameController extends Controller
             $newGame->description = $request->description;
             $newGame->save();
             DB::commit();
-            return redirect()->action('GameController@index')->with('status-success', 'Registro criado!');
+            return redirect()->action('GameController@index')->with('status-success', 'Registro criado com sucesso!');
         } catch (\Exception $e) {
             DB::rollback();
             return redirect()->action('GameController@index')->with('status-error', 'Falha ao salvar registro!');
@@ -151,7 +151,7 @@ class GameController extends Controller
                 $game->description = $request->description;
                 $game->save();
                 DB::commit();
-                return redirect()->action('GameController@index')->with('status-success', 'Registro atualizado!');
+                return redirect()->action('GameController@index')->with('status-success', 'Registro atualizado com sucesso!');
             } catch (\Exception $e) {
                 DB::rollback();
                 return redirect()->action('GameController@index')->with('status-error', 'Falha ao atualizar registro!');
@@ -175,10 +175,10 @@ class GameController extends Controller
             try {
                 $game->delete();
                 DB::commit();
-                //return redirect()->action('GameController@index')->with('status-success', 'Registro excluído!');
+                return redirect()->action('GameController@index')->with('status-success', 'Registro excluído com sucesso!');
             } catch (\Exception $e) {
                 DB::rollback();
-                //return redirect()->action('GameController@index')->with('status-error', 'Falha ao excluir registro!');
+                return redirect()->action('GameController@index')->with('status-error', 'Falha ao excluir registro!');
                 //dd($e);
             }
         }

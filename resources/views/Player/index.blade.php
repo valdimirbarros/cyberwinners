@@ -31,33 +31,20 @@
                 <td width="40%">{{$player->description}}</td>
                 <td width="5%">{{$player->pontuation}}</td>
             <td>
-                <a href='{{url('/jogador/' . $player->slug)}}' class="btn btn-light" >Ver mais</a> 
-                <a href='{{url('/jogador/' . $player->slug . '/editar/')}}' class="btn btn-secondary">Editar</a> 
-                <button onclick="removePlayer('{{$player->slug}}')" class="btn btn-danger">Remover</a></td>
+                <div class="d-flex justify-content-around">
+                    <a href='{{url('/jogador/' . $player->slug)}}' class="btn btn-light">Ver mais</a> 
+                    <a href='{{url('/jogador/' . $player->slug . '/editar/')}}' class="btn btn-secondary">Editar</a> 
+                    <form action="{{url('/jogador/' . $player->slug)}}" method="post">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </form> 
+                </div>
             </tr>    
         @endforeach
             </table>
         
-            
-
     </div>
-
-    <script>
-        function removePlayer(slug){
-            $.ajax({
-                type:'DELETE',
-                url: '{{url('/jogador/')}}/' + slug,
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success:function(data){
-                    window.location.reload();
-                }
-             });
-        
-        }
-        
-    </script>
 
 @endsection
 
